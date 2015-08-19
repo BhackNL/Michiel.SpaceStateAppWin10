@@ -44,10 +44,10 @@
         <TextBlock x:Name="tbSpaceState" Grid.Row="0" Text="Closed" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="80" Grid.ColumnSpan="2" />
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button x:Name="btnOpenSpace" Margin="10" Content="Open Space" Click="OpenSpaceClicked" VerticalAlignment="Center" HorizontalAlignment="Center"
+            <Button Margin="10" Content="Open Space" Click="OpenSpaceClicked" VerticalAlignment="Center" HorizontalAlignment="Center"
 				Width="150" Height="150" BorderBrush="Black" BorderThickness="4" />
 
-            <Button x:Name="btnCloseSpace" Margin="10" Content="Close Space" Click="CloseSpaceClicked" VerticalAlignment="Center" HorizontalAlignment="Center"
+            <Button Margin="10" Content="Close Space" Click="CloseSpaceClicked" VerticalAlignment="Center" HorizontalAlignment="Center"
 				Width="150" Height="150" BorderBrush="Black" BorderThickness="4" />
         </StackPanel>
     </Grid>
