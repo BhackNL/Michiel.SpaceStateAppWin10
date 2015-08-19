@@ -17,6 +17,8 @@ namespace SpaceStateApp
         private static readonly Uri SetStateApiUri = new Uri("https://space.bhack.nl/api/slack");
         private static readonly Uri SpaceStateApiUri = new Uri("https://space.bhack.nl/SpaceApi");
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private DispatcherTimer _timer;
         private HttpClient _httpClient;
 
@@ -47,11 +49,9 @@ namespace SpaceStateApp
             _timer.Start();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
-        {
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null) =>
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
+
 
         private async Task GetSpaceStateAsync()
         {
