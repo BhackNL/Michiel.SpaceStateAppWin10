@@ -36,17 +36,17 @@ namespace SpaceStateApp
 
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 0, 5);
-            _timer.Tick += (sender, e) => GetSpaceState();
+            _timer.Tick += (sender, e) => GetSpaceStateAsync();
             _timer.Start();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName]string propertyName = null)
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private async Task GetSpaceState()
+        private async Task GetSpaceStateAsync()
         {
             var filter = new HttpBaseProtocolFilter();
             filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
@@ -59,9 +59,9 @@ namespace SpaceStateApp
                 return;
 
             var stringContent = await response.Content.ReadAsStringAsync();
-            var content = (dynamic)JsonConvert.DeserializeObject(stringContent);
+            var spaceApi = (dynamic)JsonConvert.DeserializeObject(stringContent);
 
-            IsSpaceOpen = (bool)content["state"]["open"].Value;
+            IsSpaceOpen = (bool)spaceApi["state"]["open"].Value;
         }
 
 
@@ -82,7 +82,7 @@ namespace SpaceStateApp
             var formValues = new Dictionary<string, string>
             {
                 ["text"] = state,
-                ["user_name"] = "michiel",
+                ["user_name"] = "SpaceStateApp",
                 ["token"] = "IPMgcu6fqWX02n9Q5KZDdLVd"
             };
 
