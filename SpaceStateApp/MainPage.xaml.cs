@@ -18,6 +18,7 @@ namespace SpaceStateApp
         private static readonly Uri SpaceStateApiUri = new Uri("https://space.bhack.nl/SpaceApi");
 
         private DispatcherTimer _timer;
+        private HttpClient _httpClient;
 
         private bool _isSpaceOpen;
         public bool IsSpaceOpen
@@ -34,6 +35,11 @@ namespace SpaceStateApp
         {
             InitializeComponent();
 
+            var filter = new HttpBaseProtocolFilter();
+            filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
+
+            _httpClient = new HttpClient(filter);
+
             _timer = new DispatcherTimer();
             _timer.Interval = new TimeSpan(0, 0, 5);
             _timer.Tick += (sender, e) => GetSpaceStateAsync();
@@ -41,19 +47,11 @@ namespace SpaceStateApp
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 
         private async Task GetSpaceStateAsync()
         {
-            var filter = new HttpBaseProtocolFilter();
-            filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
-
-            var httpClient = new HttpClient(filter);
-
-            var response = await httpClient.GetAsync(SpaceStateApiUri);
+            var response = await _httpClient.GetAsync(SpaceStateApiUri);
 
             if (response.StatusCode != HttpStatusCode.Ok)
                 return;
@@ -77,8 +75,6 @@ namespace SpaceStateApp
 
         private async Task SetSpaceStateAsync(string state)
         {
-            var httpClient = new HttpClient();
-
             var formValues = new Dictionary<string, string>
             {
                 ["text"] = state,
@@ -87,7 +83,7 @@ namespace SpaceStateApp
             };
 
             var content = new HttpFormUrlEncodedContent(formValues.ToList());
-            var response = await httpClient.PostAsync(SetStateApiUri, content);
+            var response = await _httpClient.PostAsync(SetStateApiUri, content);
         }
     }
 }
