@@ -34,6 +34,7 @@ namespace SpaceStateApp
         public MainPage()
         {
             InitializeComponent();
+            DataContext = this;
 
             var filter = new HttpBaseProtocolFilter();
             filter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
@@ -47,7 +48,10 @@ namespace SpaceStateApp
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private async Task GetSpaceStateAsync()
         {

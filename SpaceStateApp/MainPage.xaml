@@ -10,10 +10,10 @@
 
     <Grid x:Name="grid" Background="Red">
         <Interactivity:Interaction.Behaviors>
-            <Core:DataTriggerBehavior Binding="{x:Bind IsSpaceOpen}" Value="True">
+            <Core:DataTriggerBehavior Binding="{Binding IsSpaceOpen}" Value="True">
                 <Core:GoToStateAction StateName="OpenState"/>
             </Core:DataTriggerBehavior>
-            <Core:DataTriggerBehavior Binding="{x:Bind IsSpaceOpen}" Value="False">
+            <Core:DataTriggerBehavior Binding="{Binding IsSpaceOpen}" Value="False">
                 <Core:GoToStateAction StateName="ClosedState"/>
             </Core:DataTriggerBehavior>
         </Interactivity:Interaction.Behaviors>
