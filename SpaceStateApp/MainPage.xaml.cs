@@ -22,13 +22,13 @@ namespace SpaceStateApp
         private DispatcherTimer _timer;
         private HttpClient _httpClient;
 
-        private bool _isSpaceOpen;
-        public bool IsSpaceOpen
+        private SpaceState _spaceState;
+        public SpaceState SpaceState
         {
-            get { return _isSpaceOpen; }
+            get { return _spaceState; }
             set
             {
-                _isSpaceOpen = value;
+                _spaceState = value;
                 NotifyPropertyChanged();
             }
         }
@@ -44,17 +44,19 @@ namespace SpaceStateApp
             _httpClient = new HttpClient(filter);
 
             _timer = new DispatcherTimer();
-            _timer.Interval = new TimeSpan(0, 0, 5);
-            _timer.Tick += (sender, e) => GetSpaceStateAsync();
+            _timer.Interval = new TimeSpan(0, 0, 15);
+            _timer.Tick += (sender, e) => UpdateSpaceState();
             _timer.Start();
         }
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null) =>
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 
-
-        private async Task GetSpaceStateAsync()
+        private async Task UpdateSpaceState()
         {
+            _timer.Stop();
+
+            SpaceState = SpaceState.Loading;
             var response = await _httpClient.GetAsync(SpaceStateApiUri);
 
             if (response.StatusCode != HttpStatusCode.Ok)
@@ -63,18 +65,22 @@ namespace SpaceStateApp
             var stringContent = await response.Content.ReadAsStringAsync();
             var spaceApi = (dynamic)JsonConvert.DeserializeObject(stringContent);
 
-            IsSpaceOpen = (bool)spaceApi["state"]["open"].Value;
+            SpaceState = (bool)spaceApi["state"]["open"].Value ? SpaceState.Open : SpaceState.Closed;
+
+            _timer.Start();
         }
 
 
         private async void OpenSpaceClicked(object sender, RoutedEventArgs e)
         {
             await SetSpaceStateAsync("open");
+            await UpdateSpaceState();
         }
 
         private async void CloseSpaceClicked(object sender, RoutedEventArgs e)
         {
             await SetSpaceStateAsync("close");
+            await UpdateSpaceState();
         }
 
         private async Task SetSpaceStateAsync(string state)

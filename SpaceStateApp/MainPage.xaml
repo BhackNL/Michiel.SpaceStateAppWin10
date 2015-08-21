@@ -6,22 +6,42 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Class="SpaceStateApp.MainPage"
+    xmlns:c="using:SpaceStateApp.Converters"
     mc:Ignorable="d">
 
-    <Grid x:Name="grid" Background="Red">
+    <Page.Resources>
+        <c:ToStringConverter x:Key="ToStringConverter" />
+    </Page.Resources>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Interactivity:Interaction.Behaviors>
-            <Core:DataTriggerBehavior Binding="{Binding IsSpaceOpen}" Value="True">
+            <Core:DataTriggerBehavior Binding="{Binding SpaceState, Converter={StaticResource ToStringConverter}}" Value="Open">
                 <Core:GoToStateAction StateName="OpenState"/>
             </Core:DataTriggerBehavior>
-            <Core:DataTriggerBehavior Binding="{Binding IsSpaceOpen}" Value="False">
+            <Core:DataTriggerBehavior Binding="{Binding SpaceState, Converter={StaticResource ToStringConverter}}" Value="Closed">
                 <Core:GoToStateAction StateName="ClosedState"/>
             </Core:DataTriggerBehavior>
+            <Core:DataTriggerBehavior Binding="{Binding SpaceState, Converter={StaticResource ToStringConverter}}" Value="Loading">
+                <Core:GoToStateAction StateName="LoadingState"/>
+            </Core:DataTriggerBehavior>
         </Interactivity:Interaction.Behaviors>
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SpaceStateGroup">
+                <VisualState x:Name="ClosedState"/>
+                <VisualState x:Name="LoadingState">
+                    <VisualState.Setters>
+                        <Setter Target="border.(Panel.Background)">
+                            <Setter.Value>
+                                <SolidColorBrush Color="DeepSkyBlue"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="tbSpaceState.(TextBlock.Text)" Value="Loading..."/>
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="OpenState">
                     <VisualState.Setters>
-                        <Setter Target="grid.(Panel.Background)">
+                        <Setter Target="border.(Panel.Background)">
                             <Setter.Value>
                                 <SolidColorBrush Color="LimeGreen"/>
                             </Setter.Value>
@@ -29,7 +49,6 @@
                         <Setter Target="tbSpaceState.(TextBlock.Text)" Value="Open"/>
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="ClosedState"/>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
@@ -41,14 +60,16 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="tbSpaceState" Grid.Row="0" Text="Closed" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="80" Grid.ColumnSpan="2" />
+        <Border x:Name="border" Grid.Row="0" Background="Red">
+            <TextBlock x:Name="tbSpaceState" Grid.Row="0" Text="Closed" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="80" Grid.ColumnSpan="2" />
+        </Border>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button Margin="10" Content="Open Space" Click="OpenSpaceClicked" VerticalAlignment="Center" HorizontalAlignment="Center"
-				Width="150" Height="150" BorderBrush="Black" BorderThickness="4" />
+				Width="150" Height="150" BorderBrush="Black" />
 
             <Button Margin="10" Content="Close Space" Click="CloseSpaceClicked" VerticalAlignment="Center" HorizontalAlignment="Center"
-				Width="150" Height="150" BorderBrush="Black" BorderThickness="4" />
+				Width="150" Height="150" BorderBrush="Black" />
         </StackPanel>
     </Grid>
 </Page>
