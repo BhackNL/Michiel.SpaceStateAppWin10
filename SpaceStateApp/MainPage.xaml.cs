@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
@@ -44,9 +45,11 @@ namespace SpaceStateApp
             _httpClient = new HttpClient(filter);
 
             _timer = new DispatcherTimer();
-            _timer.Interval = new TimeSpan(0, 0, 15);
+            _timer.Interval = new TimeSpan(0, 0, 30);
             _timer.Tick += (sender, e) => UpdateSpaceState();
             _timer.Start();
+
+            UpdateSpaceState();
         }
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null) =>
@@ -81,6 +84,21 @@ namespace SpaceStateApp
         {
             await SetSpaceStateAsync("close");
             await UpdateSpaceState();
+        }
+
+
+        private async void EspressoClicked(object sender, RoutedEventArgs e)
+        {
+            var messageDialog = new MessageDialog("Not implemented!", "Sorry!");
+
+            await messageDialog.ShowAsync();
+        }
+
+        private async void LungoClicked(object sender, RoutedEventArgs e)
+        {
+            var messageDialog = new MessageDialog("Not implemented!", "Sorry!");
+
+            await messageDialog.ShowAsync();
         }
 
         private async Task SetSpaceStateAsync(string state)
